@@ -42,7 +42,7 @@ Statistic = {
 }
 
 
-def dqn_learing(
+def dqn_learing1(
         env,
         q_func,
         optimizer_spec,

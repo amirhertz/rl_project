@@ -190,7 +190,7 @@ def dqn_learing(
         encoded_obs = replay_buffer.encode_recent_observation()
 
         if t > learning_starts:
-            action = select_epilson_greedy_action(model, encoded_obs, t)[0][0]
+            action = select_epilson_greedy_action(model, encoded_obs, t)[0]
         else:
             action = random.randrange(num_actions)
 
@@ -224,13 +224,13 @@ def dqn_learing(
 
             obs_batch, act_batch, rew_batch, next_obs_batch, done_mask = replay_buffer.sample(batch_size)
 
-            obs_batch = torch.from_numpy(obs_batch).type(dtype) / 255.0
+            obs_batch = Variable(torch.from_numpy(obs_batch).type(dtype) / 255.0)
 
-            next_obs_batch = torch.from_numpy(next_obs_batch).type(dtype) / 255.0
-            act_batch = Variable( torch.tensor( act_batch).type(torch.LongTensor) )
+            next_obs_batch = Variable(torch.from_numpy(next_obs_batch).type(dtype) / 255.0)
+            act_batch = Variable( torch.Tensor( act_batch).type(torch.LongTensor) )
+            rew_batch = Variable(torch.from_numpy(rew_batch))
 
-
-            done_mask = Variable (torch.tensor([1. if val == 0 else 0. for val in done_mask]))
+            done_mask = Variable (torch.Tensor([1. if val == 0 else 0. for val in done_mask]))
             if USE_CUDA:
                 done_mask = done_mask.cuda()
                 act_batch = act_batch.cuda()
