@@ -19,6 +19,7 @@ from utils.gym import get_wrapper_by_name
 from dqn_model import DQN
 
 USE_CUDA = torch.cuda.is_available()
+print("cuda: " + str(USE_CUDA))
 dtype = torch.cuda.FloatTensor if torch.cuda.is_available() else torch.FloatTensor
 
 class Variable(autograd.Variable):
