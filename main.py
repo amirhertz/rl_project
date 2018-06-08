@@ -19,14 +19,14 @@ import torch
 # ALPHA = 0.95
 # EPS = 0.01
 
-BATCH_SIZE = 32
+BATCH_SIZE = 40
 GAMMA = 0.99
 REPLAY_BUFFER_SIZE = 1000000
 LEARNING_STARTS = 50000
-LEARNING_FREQ = 8
-FRAME_HISTORY_LEN = 8
-TARGER_UPDATE_FREQ = 5000
-LEARNING_RATE = 0.005
+LEARNING_FREQ = 4
+FRAME_HISTORY_LEN = 4
+TARGER_UPDATE_FREQ = 1000
+LEARNING_RATE = 0.0001
 ALPHA = 0.95
 EPS = 0.01
 
@@ -41,10 +41,10 @@ def main(env, num_timesteps):
         constructor=optim.RMSprop,
         kwargs=dict(lr=LEARNING_RATE, alpha=ALPHA, eps=EPS),
     )
-    endpoints = [(0, 1), (500000, 0.7), (1000000, 0.1), (3000000, 0.01)]
+    endpoints = [(0, 1), (1000000, 0.1), (3000000, 0.02)]
 
     # exploration_schedule = LinearSchedule(1000000, 0.1)
-    exploration_schedule = PiecewiseSchedule(endpoints, outside_value=0.01)
+    exploration_schedule = PiecewiseSchedule(endpoints, outside_value=0.02)
     dqn_learing(
         env=env,
         q_func=DQN,
