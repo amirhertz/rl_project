@@ -235,6 +235,10 @@ def dqn_learing(
             if USE_CUDA:
                 done_mask = done_mask.cuda()
                 act_batch = act_batch.cuda()
+                rew_batch = rew_batch.cuda()
+                obs_batch = obs_batch.cuda()
+                next_obs_batch = next_obs_batch.cuda()
+
 
             # 3.b: fill in your own code to compute the Bellman error. This requires
             # evaluating the current and next Q-values and constructing the corresponding error.
