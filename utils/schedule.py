@@ -1,6 +1,8 @@
+import numpy as np
 """
     This file is copied/apdated from https://github.com/berkeleydeeprlcourse/homework/tree/master/hw3
 """
+
 class Schedule(object):
     def value(self, t):
         """Value of the schedule at time t"""
@@ -89,15 +91,20 @@ class LinearSchedule(object):
 
 
 class AdaptiveSchedule(object):
-    def __init__(self, linear_timesteps, linear_final_p, min_p=0.02, delta_p=1e-6):
+    def __init__(self, linear_timesteps, linear_final_p, episodes_mem=10, min_p=0.02, max_p=0.5, delta_p=1e-6):
+
         """Adaptive to the differences between rewards
         Starting as a Linear Schedule for linear_timesteps
         Afterward, the returned p value changes according to the changes in rewards
         Parameters
         ----------
         linear_timesteps, linear_final_p : LinearSchedule parameters
+        episodes_mem: int
+            How many episodes should be played between updates to p
         min_p: float
-            minimal p value
+            minimal p value while in adaptive mode
+        min_p: float
+            maximal p value while in adaptive mode
         delta_p: float
             adaptive step size
         """
@@ -106,6 +113,8 @@ class AdaptiveSchedule(object):
         self.last_reward = 0
         self.adaptive_p = 1
         self.min_p = min_p
+        self.max_p = max_p
+        self.episodes_mem = episodes_mem
 
     def value(self, t):
         """See Schedule.value"""
@@ -113,12 +122,14 @@ class AdaptiveSchedule(object):
             self.adaptive_p = self.linear_schedule.value(t)
         return self.adaptive_p
 
-    def add_reward(self, new_reward):
-        """change p according to last_reward - new_reward """
-        if new_reward > self.last_reward:
-            self.adaptive_p -= self.delta_p
-            self.adaptive_p = max(self.min_p, self.adaptive_p)
-        else:
-            self.adaptive_p += self.delta_p
-            self.adaptive_p = min(1, self.adaptive_p)
-        self.last_reward = new_reward
+    def add_reward(self, episode_rewards):
+        if len(episode_rewards) % self.episodes_mem == 0:
+            """change p according to last_reward - new_reward """
+            new_reward = np.mean(episode_rewards[-10:])
+            if new_reward > self.last_reward:
+                self.adaptive_p -= self.delta_p
+                self.adaptive_p = max(self.min_p, self.adaptive_p)
+            else:
+                self.adaptive_p += self.delta_p
+                self.adaptive_p = min(self.max_p, self.adaptive_p)
+            self.last_reward = new_reward
