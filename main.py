@@ -4,31 +4,31 @@ import torch.optim as optim
 from dqn_model import DQN
 from dqn_learn import OptimizerSpec, dqn_learing
 from utils.gym import get_env, get_wrapper_by_name
-from utils.schedule import LinearSchedule, PiecewiseSchedule
+from utils.schedule import LinearSchedule, PiecewiseSchedule, AdaptiveSchedule
 import numpy as np
 import torch
 
-# BATCH_SIZE = 32
-# GAMMA = 0.99
-# REPLAY_BUFFER_SIZE = 1000000
-# LEARNING_STARTS = 50000
-# LEARNING_FREQ = 4
-# FRAME_HISTORY_LEN = 4
-# TARGER_UPDATE_FREQ = 10000
-# LEARNING_RATE = 0.00025
-# ALPHA = 0.95
-# EPS = 0.01
-
-BATCH_SIZE = 40
+BATCH_SIZE = 32
 GAMMA = 0.99
 REPLAY_BUFFER_SIZE = 1000000
 LEARNING_STARTS = 50000
 LEARNING_FREQ = 4
 FRAME_HISTORY_LEN = 4
-TARGER_UPDATE_FREQ = 1000
-LEARNING_RATE = 0.0001
+TARGER_UPDATE_FREQ = 10000
+LEARNING_RATE = 0.00025
 ALPHA = 0.95
 EPS = 0.01
+
+# BATCH_SIZE = 40
+# GAMMA = 0.99
+# REPLAY_BUFFER_SIZE = 1000000
+# LEARNING_STARTS = 50000
+# LEARNING_FREQ = 4
+# FRAME_HISTORY_LEN = 4
+# TARGER_UPDATE_FREQ = 1000
+# LEARNING_RATE = 0.0001
+# ALPHA = 0.95
+# EPS = 0.01
 
 def main(env, num_timesteps):
 
@@ -41,10 +41,11 @@ def main(env, num_timesteps):
         constructor=optim.RMSprop,
         kwargs=dict(lr=LEARNING_RATE, alpha=ALPHA, eps=EPS),
     )
-    endpoints = [(0, 1), (1000000, 0.1), (3000000, 0.02)]
-
+    # endpoints = [(0, 1), (1000000, 0.1), (3000000, 0.02)]
+    # exploration_schedule = PiecewiseSchedule(endpoints, outside_value=0.02)
+    exploration_schedule = AdaptiveSchedule(500000, 0.5)
     # exploration_schedule = LinearSchedule(1000000, 0.1)
-    exploration_schedule = PiecewiseSchedule(endpoints, outside_value=0.02)
+
     dqn_learing(
         env=env,
         q_func=DQN,

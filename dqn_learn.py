@@ -290,6 +290,8 @@ def dqn_learing(
         episode_rewards = get_wrapper_by_name(env, "Monitor").get_episode_rewards()
         if len(episode_rewards) > 0:
             mean_episode_reward = np.mean(episode_rewards[-100:])
+            if hasattr(exploration, 'add_reward'):
+                exploration.add_reward(np.mean(episode_rewards[-1:]))
         if len(episode_rewards) > 100:
             best_mean_episode_reward = max(best_mean_episode_reward, mean_episode_reward)
 
