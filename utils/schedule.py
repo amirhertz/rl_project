@@ -91,7 +91,7 @@ class LinearSchedule(object):
 
 
 class AdaptiveSchedule(object):
-    def __init__(self, linear_timesteps, linear_final_p, episodes_mem=10, min_p=0.02, max_p=0.5, delta_p=1e-6):
+    def __init__(self, linear_timesteps, linear_final_p, episodes_mem=10, min_p=0.02, max_p=0.5, delta_p=0.0025):
 
         """Adaptive to the differences between rewards
         Starting as a Linear Schedule for linear_timesteps
@@ -124,9 +124,9 @@ class AdaptiveSchedule(object):
 
     def add_reward(self, episode_rewards):
         if len(episode_rewards) % self.episodes_mem == 0:
-            """change p according to last_reward - new_reward """
-            new_reward = np.mean(episode_rewards[-10:])
-            if new_reward > self.last_reward:
+            """change p according to last_reward vs new_reward """
+            new_reward = np.mean(episode_rewards[-self.episodes_mem:])
+            if new_reward >= self.last_reward:
                 self.adaptive_p -= self.delta_p
                 self.adaptive_p = max(self.min_p, self.adaptive_p)
             else:
