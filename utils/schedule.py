@@ -119,6 +119,6 @@ class AdaptiveSchedule(object):
             self.adaptive_p -= self.delta_p
             self.adaptive_p = max(self.min_p, self.adaptive_p)
         else:
-            self.adaptive_p -= self.delta_p
+            self.adaptive_p += self.delta_p
             self.adaptive_p = min(1, self.adaptive_p)
         self.last_reward = new_reward
