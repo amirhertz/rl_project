@@ -91,7 +91,7 @@ class LinearSchedule(object):
 
 
 class AdaptiveSchedule(object):
-    def __init__(self, linear_timesteps, linear_final_p, episodes_mem=10, min_p=0.02, max_p=0.5, delta_p=0.0025):
+    def __init__(self, linear_timesteps, linear_final_p, episodes_mem=5, min_p=0.02, max_p=0.5):
 
         """Adaptive to the differences between rewards
         Starting as a Linear Schedule for linear_timesteps
@@ -105,16 +105,15 @@ class AdaptiveSchedule(object):
             minimal p value while in adaptive mode
         min_p: float
             maximal p value while in adaptive mode
-        delta_p: float
-            adaptive step size
         """
         self.linear_schedule = LinearSchedule(linear_timesteps, linear_final_p)
-        self.delta_p = delta_p
-        self.last_reward = 0
+        self.delta_p = (1 / 1000000) * episodes_mem * 2000
+        self.last_reward = - 20
         self.adaptive_p = 1
         self.min_p = min_p
         self.max_p = max_p
         self.episodes_mem = episodes_mem
+        self.episodes_count = 1
 
     def value(self, t):
         """See Schedule.value"""
@@ -123,9 +122,10 @@ class AdaptiveSchedule(object):
         return self.adaptive_p
 
     def add_reward(self, episode_rewards):
-        if len(episode_rewards) % self.episodes_mem == 0:
+        cur_count = len(episode_rewards)
+        if cur_count != self.episodes_count and cur_count % self.episodes_mem == 1:
             """change p according to last_reward vs new_reward """
-            new_reward = np.mean(episode_rewards[-self.episodes_mem:])
+            new_reward = np.mean(episode_rewards[-self.episodes_mem - 1: -1])
             if new_reward >= self.last_reward:
                 self.adaptive_p -= self.delta_p
                 self.adaptive_p = max(self.min_p, self.adaptive_p)
@@ -133,3 +133,4 @@ class AdaptiveSchedule(object):
                 self.adaptive_p += self.delta_p
                 self.adaptive_p = min(self.max_p, self.adaptive_p)
             self.last_reward = new_reward
+            self.episodes_count = cur_count
