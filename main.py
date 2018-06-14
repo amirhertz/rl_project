@@ -43,7 +43,7 @@ def main(env, num_timesteps):
     )
     # endpoints = [(0, 1), (1000000, 0.1), (3000000, 0.02)]
     # exploration_schedule = PiecewiseSchedule(endpoints, outside_value=0.02)
-    exploration_schedule = AdaptiveSchedule(500000, 0.5)
+    exploration_schedule = AdaptiveSchedule(500000, 0.5,  episodes_mem=8)
     # exploration_schedule = LinearSchedule(1000000, 0.1)
 
     dqn_learing(
