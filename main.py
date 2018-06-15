@@ -8,27 +8,27 @@ from utils.schedule import LinearSchedule, PiecewiseSchedule, AdaptiveSchedule
 import numpy as np
 import torch
 
-# BATCH_SIZE = 32
-# GAMMA = 0.99
-# REPLAY_BUFFER_SIZE = 1000000
-# LEARNING_STARTS = 50000
-# LEARNING_FREQ = 4
-# FRAME_HISTORY_LEN = 4
-# TARGER_UPDATE_FREQ = 10000
-# LEARNING_RATE = 0.00025
-# ALPHA = 0.95
-# EPS = 0.01
-
 BATCH_SIZE = 42
 GAMMA = 0.99
 REPLAY_BUFFER_SIZE = 1000000
 LEARNING_STARTS = 50000
-LEARNING_FREQ = 6
-FRAME_HISTORY_LEN = 6
-TARGER_UPDATE_FREQ = 1000
+LEARNING_FREQ = 4
+FRAME_HISTORY_LEN = 4
+TARGER_UPDATE_FREQ = 10000
 LEARNING_RATE = 0.00025
 ALPHA = 0.95
 EPS = 0.01
+
+# BATCH_SIZE = 42
+# GAMMA = 0.99
+# REPLAY_BUFFER_SIZE = 1000000
+# LEARNING_STARTS = 50000
+# LEARNING_FREQ = 6
+# FRAME_HISTORY_LEN = 6
+# TARGER_UPDATE_FREQ = 1000
+# LEARNING_RATE = 0.00025
+# ALPHA = 0.95
+# EPS = 0.01
 
 def main(env, num_timesteps):
 
@@ -43,8 +43,8 @@ def main(env, num_timesteps):
     )
     # endpoints = [(0, 1), (1000000, 0.1), (3000000, 0.02)]
     # exploration_schedule = PiecewiseSchedule(endpoints, outside_value=0.02)
-    exploration_schedule = AdaptiveSchedule(500000, 0.5,  episodes_mem=8)
-    # exploration_schedule = LinearSchedule(1000000, 0.1)
+    # exploration_schedule = AdaptiveSchedule(500000, 0.5,  episodes_mem=8)
+    exploration_schedule = LinearSchedule(1000000, 0.1)
 
     dqn_learing(
         env=env,
